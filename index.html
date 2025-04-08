@@ -1,0 +1,87 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Incentive Calculator</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 600px; margin: auto; }
+    label { display: block; margin-top: 15px; }
+    input { width: 100%; padding: 8px; margin-top: 5px; }
+    button { margin-top: 20px; padding: 10px 15px; font-size: 16px; }
+    .result { margin-top: 20px; font-weight: bold; font-size: 18px; }
+    .error { color: red; font-weight: bold; margin-top: 10px; }
+  </style>
+</head>
+<body>
+  <h1>Incentive Calculator</h1>
+
+  <label>Annual Base Salary ($)
+    <input type="number" id="baseSalary" value="0" />
+  </label>
+
+  <label>Teaching Role ($)
+    <input type="number" id="teachingRole" value="0" />
+  </label>
+
+  <label>Grant Funding ($)
+    <input type="number" id="grantFunding" value="0" />
+  </label>
+
+  <label>Gift Funding ($)
+    <input type="number" id="giftFunding" value="0" />
+  </label>
+
+  <label>Funding Threshold (%) 
+    <input type="number" id="fundingThreshold" value="65" />
+  </label>
+
+  <label>Incentive Match (%) 
+    <input type="number" id="incentiveMatch" value="53.85" />
+  </label>
+
+  <button onclick="calculateIncentive()">Calculate Incentive</button>
+
+  <div id="errorMsg" class="error"></div>
+  <div id="resultDisplay" class="result"></div>
+
+  <script>
+    function calculateIncentive() {
+      const baseSalary = parseFloat(document.getElementById('baseSalary').value);
+      const teachingRole = parseFloat(document.getElementById('teachingRole').value);
+      const grantFunding = parseFloat(document.getElementById('grantFunding').value);
+      const giftFunding = parseFloat(document.getElementById('giftFunding').value);
+      const fundingThreshold = parseFloat(document.getElementById('fundingThreshold').value);
+      const incentiveMatch = parseFloat(document.getElementById('incentiveMatch').value);
+
+      const errorMsg = document.getElementById('errorMsg');
+      const resultDisplay = document.getElementById('resultDisplay');
+      errorMsg.innerText = '';
+      resultDisplay.innerText = '';
+
+      if (isNaN(baseSalary) || isNaN(teachingRole) || isNaN(grantFunding) || isNaN(giftFunding) || isNaN(fundingThreshold) || isNaN(incentiveMatch)) {
+        errorMsg.innerText = 'Please fill out all fields.';
+        return;
+      }
+
+      if (grantFunding > baseSalary) {
+        errorMsg.innerText = 'Grant funding cannot exceed annual base salary.';
+        return;
+      }
+
+      const researchComponent = baseSalary - teachingRole;
+      const totalExternalFunding = grantFunding + giftFunding;
+      const threshold = researchComponent * (fundingThreshold / 100);
+
+      let result = 0;
+      if (totalExternalFunding >= threshold) {
+        const surplus = totalExternalFunding - threshold;
+        result = surplus * (incentiveMatch / 100);
+      }
+
+      resultDisplay.innerText = 'Calculated Incentive: $' + result.toFixed(2);
+    }
+  </script>
+</body>
+</html>
